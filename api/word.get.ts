@@ -3,5 +3,5 @@ export default defineEventHandler(async (e) => {
   const name = searchParams.get("name");
 
   const res = await fetchWordMeaning(name);
-  return res ? JSON.stringify(res) : null;
+  return res;
 });

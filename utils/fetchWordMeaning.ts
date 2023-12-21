@@ -15,12 +15,12 @@ export const fetchWordMeaning = async (
   word: string,
 ): Promise<{
   word: string;
+  cambridgeUrl: string;
   phonetics: Phonetic[];
   explanations: Explanation[];
 } | null> => {
-  const html = await fetch(
-    `https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/${word}`,
-  ).then((res) => res.text());
+  const cambridgeUrl = `https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/${word}`;
+  const html = await fetch(cambridgeUrl).then((res) => res.text());
 
   const $ = load(html);
 
@@ -30,6 +30,7 @@ export const fetchWordMeaning = async (
 
   const phonetics: Phonetic[] = [];
   const explanations: Explanation[] = [];
+  const basePartOfSpeech = $(".pos-header .dpos").text();
 
   $(".dpron-i").each(function (this: any) {
     const region = $(this).find(".region.dreg").text();
@@ -50,7 +51,7 @@ export const fetchWordMeaning = async (
       .each(function (this: any) {
         const meaning = $(this).find(".def-body > .trans.dtrans.dtrans-se").text();
         explanations.push({
-          partOfSpeech,
+          partOfSpeech: partOfSpeech || basePartOfSpeech,
           meaning,
         });
       });
@@ -58,6 +59,7 @@ export const fetchWordMeaning = async (
 
   return {
     word,
+    cambridgeUrl,
     phonetics,
     explanations,
   };
