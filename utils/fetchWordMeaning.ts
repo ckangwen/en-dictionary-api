@@ -5,6 +5,7 @@ export type WordMeaning = Record<string, Array<{ en: string; cn: string }>>;
 interface Phonetic {
   region: string;
   pron: string;
+  audio: string;
 }
 interface Explanation {
   partOfSpeech: string;
@@ -35,10 +36,12 @@ export const fetchWordMeaning = async (
   $(".dpron-i").each(function (this: any) {
     const region = $(this).find(".region.dreg").text();
     const pron = $(this).find(".pron.dpron").text();
+    const audio = $("audio source").attr("src");
     if (!phonetics.find((t) => t.region === region)) {
       phonetics.push({
         region,
         pron,
+        audio: `https://dictionary.cambridge.org${audio}`,
       });
     }
   });
